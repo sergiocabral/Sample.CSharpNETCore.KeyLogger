@@ -44,7 +44,9 @@ namespace KeyLogger
         /// </summary>
         private static void Main()
         {
-            new Timer(state =>
+            Console.WriteLine("Press any key to exit.");
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) Console.WriteLine("This example only works on Windows.");
+            else new Timer(state =>
             {
                 foreach (var key in (Keys[])Enum.GetValues(typeof(Keys)))
                 {
@@ -55,7 +57,7 @@ namespace KeyLogger
                 }
             }, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(10));
             
-            Console.ReadKey();
+            Console.ReadKey(true);
         }
 
         /// <summary>
